@@ -10,9 +10,9 @@ import (
 func main() {
 	var pRound = flag.Int64("round", 100000, "loop round")
 	var pLittle = flag.Bool("little", true, "big or false")
+	flag.Parse()
 
 	var message string
-
 	if *pLittle {
 		message = "01234567890中国"
 	} else {
@@ -20,7 +20,6 @@ func main() {
 			message += "1234567890中国"
 		}
 	}
-	flag.Parse()
 	logger := mtlog.NewLogger(mtlog.DEVELOP, mtlog.INFO, "logs", "server", 10240, -1)
 	if !logger.Start() {
 		fmt.Println("logger.Start failed")
