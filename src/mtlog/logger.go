@@ -311,7 +311,8 @@ func (o *Logger) logf(depth int, level Level, pvId string, keyword string, forma
 // time, level, threadId, position, env, pvId, keyword, content
 func (o *Logger) log(depth int, level Level, pvId string, keyword string, content string) {
 	// log message
-	buf := make([]byte, 0)
+	buf := make([]byte, 1024)
+	buf = buf[:0]
 
 	// time
 	now := getLogTime()
