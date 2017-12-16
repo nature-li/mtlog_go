@@ -20,7 +20,7 @@ func main() {
 			message += "1234567890中国"
 		}
 	}
-	logger := mtlog.NewLogger(mtlog.DEVELOP, mtlog.INFO, "logs", "server", 10240, -1)
+	logger := mtlog.NewLogger(mtlog.DEVELOP, mtlog.INFO, "logs", "server", 100 * 1024 * 1024, -1)
 	if !logger.Start() {
 		fmt.Println("logger.Start failed")
 	}
