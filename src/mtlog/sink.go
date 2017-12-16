@@ -53,7 +53,6 @@ func (o *Sink) handleQueue(v interface{}) {
 	}
 
 	o.group.flush()
-	o.group.rotate()
 }
 
 func (o *Sink) consume() {

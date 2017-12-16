@@ -103,6 +103,10 @@ func (o *fileInfo) write(level Level, content []byte) bool {
 
 	o.curLen += int64(len(content))
 	o.needFlush = true
+
+	if o.curLen >= o.maxLen {
+		o.rotate()
+	}
 	return true
 }
 
