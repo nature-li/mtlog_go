@@ -95,7 +95,7 @@ func (o *fileInfo) write(level Level, content []byte) bool {
 		return false
 	}
 
-	_, err := fmt.Fprintln(o.w, string(content))
+	_, err := o.w.Write(content)
 	if err != nil {
 		slog.error("write file error for level[" + level.String() + "]" + ": " + err.Error())
 		return false

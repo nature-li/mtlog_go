@@ -364,6 +364,9 @@ func (o *Logger) log(depth int, level Level, pvId string, keyword string, conten
 	buf = append(buf, "]"...)
 	buf = append(buf, 0x1e)
 
+	// \n
+	buf = append(buf, '\n')
+
 	r := &record{
 		level : level,
 		content: buf,
