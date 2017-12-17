@@ -42,7 +42,7 @@ func (o *fileInfo) open() bool {
 		return false
 	}
 
-	w := bufio.NewWriter(f)
+	w := bufio.NewWriterSize(f, 1 * 1024 * 1024)
 
 	stat, err := f.Stat()
 	if err != nil {
