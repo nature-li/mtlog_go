@@ -43,7 +43,7 @@ func (o *fileInfo) reopen() bool {
 	}
 
 	if o.w == nil {
-		o.w = bufio.NewWriterSize(f, 1*1024*1024)
+		o.w = bufio.NewWriter(f)
 	} else {
 		o.w.Reset(f)
 	}
