@@ -76,8 +76,15 @@ func (o *fileInfo) close() {
 		return
 	}
 
-	o.w.Flush()
-	o.f.Close()
+	err := o.w.Flush()
+	if err != nil {
+		slog.error(err.Error())
+	}
+
+	err = o.f.Close()
+	if err != nil {
+		slog.error(err.Error())
+	}
 
 	o.reset()
 }
@@ -117,7 +124,10 @@ func (o *fileInfo) flush() {
 		return
 	}
 
-	o.w.Flush()
+	err := o.w.Flush()
+	if err != nil {
+		slog.error(err.Error())
+	}
 	o.needFlush = false
 }
 
