@@ -31,7 +31,7 @@ func newFileInfo(name string, maxLen int64) *fileInfo {
 	}
 }
 
-func (o *fileInfo) open() bool {
+func (o *fileInfo) reopen() bool {
 	if !o.closed {
 		return true
 	}
@@ -42,7 +42,11 @@ func (o *fileInfo) open() bool {
 		return false
 	}
 
-	w := bufio.NewWriterSize(f, 1 * 1024 * 1024)
+	if o.w == nil {
+		o.w = bufio.NewWriterSize(f, 1*1024*1024)
+	} else {
+		o.w.Reset(f)
+	}
 
 	stat, err := f.Stat()
 	if err != nil {
@@ -51,7 +55,6 @@ func (o *fileInfo) open() bool {
 	}
 
 	o.f = f
-	o.w = w
 	o.closed = false
 	o.needFlush = false
 	o.curLen = stat.Size()
@@ -62,7 +65,6 @@ func (o *fileInfo) open() bool {
 
 func (o *fileInfo) reset() {
 	o.f = nil
-	o.w = nil
 	o.closed = true
 	o.needFlush = false
 	o.curLen = 0
@@ -136,6 +138,6 @@ func (o *fileInfo) needRotate() bool {
 func (o *fileInfo) rotate() bool {
 	o.close()
 	o.rename()
-	o.open()
+	o.reopen()
 	return true
 }

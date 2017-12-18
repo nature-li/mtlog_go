@@ -53,7 +53,7 @@ func (o *fileGroup) init() bool {
 	// open process file
 	name := filepath.Join(o.fileDir, o.fileName)
 	process := newFileInfo(name+".process.log", o.maxSize)
-	if !process.open() {
+	if !process.reopen() {
 		return false
 	}
 	o.fileMap[TRACE] = process
@@ -66,7 +66,7 @@ func (o *fileGroup) init() bool {
 
 	// open report file
 	report := newFileInfo(name+".report.log", o.maxSize)
-	if !report.open() {
+	if !report.reopen() {
 		return false
 	}
 	o.fileMap[REPORT] = report
@@ -94,7 +94,8 @@ func (o *fileGroup) write(r *record) bool {
 		return false
 	}
 
-	return info.write(r.level, r.content)
+	result := info.write(r.level, r.content)
+	return result
 }
 
 func (o *fileGroup) flush() {
