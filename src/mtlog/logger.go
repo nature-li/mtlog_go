@@ -17,7 +17,6 @@ type Logger struct {
 	level Level
 	sink  *Sink
 	pid int
-	headerLen int
 }
 
 func NewLogger(env Env, level Level, async bool, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
@@ -26,7 +25,6 @@ func NewLogger(env Env, level Level, async bool, fileDir string, fileName string
 		level: level,
 		sink:  newSink(async, fileDir, fileName, maxSize, maxCount, queueSize),
 		pid: os.Getpid(),
-		headerLen: len(os.Getenv("GOPATH")),
 	}
 }
 
@@ -382,10 +380,9 @@ func (o *Logger) getPosition(depth int) []byte {
 		fileName = "???"
 		fileLine = 0
 	}
-	relativeName := fileName[o.headerLen:]
 
 	var buf []byte
-	buf = append(buf, relativeName...)
+	buf = append(buf, fileName...)
 	buf = append(buf, ":"...)
 	buf = append(buf, strconv.Itoa(fileLine)...)
 	return buf
