@@ -119,6 +119,33 @@ func (o *fileInfo) write(level Level, content []byte) bool {
 	return true
 }
 
+func (o *fileInfo) writeAndFlush(level Level, content []byte) bool {
+	if o.closed {
+		slog.error("file has been closed for level: " + level.String())
+		return false
+	}
+
+	_, err := o.w.Write(content)
+	if err != nil {
+		slog.error("write file error for level[" + level.String() + "]" + ": " + err.Error())
+		return false
+	}
+
+	err = o.w.Flush()
+	if err != nil {
+		slog.error("flush file error for level[" + level.String() + "]" + ": " + err.Error())
+		return false
+	}
+
+	o.curLen += int64(len(content))
+	o.needFlush = true
+
+	if o.curLen >= o.maxLen {
+		o.rotate()
+	}
+	return true
+}
+
 func (o *fileInfo) flush() {
 	if !o.needFlush {
 		return

@@ -10,15 +10,17 @@ type Sink struct {
 	done  chan bool
 	group *fileGroup
 	timer *time.Timer
+	async  bool
 }
 
-func newSink(fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
+func newSink(async bool, fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
 	return &Sink{
 		ch:    make(chan interface{}, queueSize),
 		flag:  make(chan bool, 1),
 		done:  make(chan bool, 0),
 		group: newFileGroup(fileDir, fileName, maxSize, fileCount),
 		timer: time.NewTimer(time.Second * 5),
+		async:  async,
 	}
 }
 
@@ -27,17 +29,30 @@ func (o *Sink) start() bool {
 		return false
 	}
 
-	go o.consume()
+	// start consume thread
+	if o.async {
+		go o.consume()
+	}
 	return true
 }
 
 func (o *Sink) stop() {
-	o.flag <- true
-	<-o.done
+	// stop consume thread
+	if o.async {
+		o.flag <- true
+		<-o.done
+	}
 }
 
 func (o *Sink) pushBack(v interface{}) {
-	o.ch <- v
+	if o.async {
+		// push item to queue
+		o.ch <- v
+	} else {
+		// write item to disk
+		r := v.(*record)
+		o.group.writeAndFlush(r)
+	}
 }
 
 func (o *Sink) handleQueue(v interface{}) {

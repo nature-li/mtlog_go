@@ -20,11 +20,11 @@ type Logger struct {
 	headerLen int
 }
 
-func NewLogger(env Env, level Level, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
+func NewLogger(env Env, level Level, async bool, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
 	return &Logger{
 		env:   env,
 		level: level,
-		sink:  newSink(fileDir, fileName, maxSize, maxCount, queueSize),
+		sink:  newSink(async, fileDir, fileName, maxSize, maxCount, queueSize),
 		pid: os.Getpid(),
 		headerLen: len(os.Getenv("GOPATH")),
 	}
