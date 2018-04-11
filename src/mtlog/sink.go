@@ -2,6 +2,7 @@ package mtlog
 
 import (
 	"time"
+	"sync"
 )
 
 type Sink struct {
@@ -11,6 +12,7 @@ type Sink struct {
 	group *fileGroup
 	timer *time.Timer
 	async bool
+	mutex *sync.Mutex
 }
 
 func newSink(fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
@@ -21,6 +23,7 @@ func newSink(fileDir string, fileName string, maxSize int64, fileCount int, queu
 		group: newFileGroup(fileDir, fileName, maxSize, fileCount),
 		timer: time.NewTimer(time.Second * 5),
 		async: true,
+		mutex: new(sync.Mutex),
 	}
 }
 
@@ -55,6 +58,9 @@ func (o *Sink) pushBack(v interface{}) {
 	} else {
 		// write item to disk
 		r := v.(*record)
+
+		o.mutex.Lock()
+		defer o.mutex.Unlock()
 		o.group.writeFlushRotate(r)
 	}
 }

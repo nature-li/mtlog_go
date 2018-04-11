@@ -161,7 +161,7 @@ func (o *fileGroup) clean(middle string) {
 		}
 
 		fields := strings.Split(name, ".")
-		tail := fields[len(fields) - 1]
+		tail := fields[len(fields)-1]
 		if !o.checkTail(tail) {
 			continue
 		}
