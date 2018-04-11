@@ -98,14 +98,14 @@ func (o *fileGroup) write(r *record) bool {
 	return result
 }
 
-func (o *fileGroup) writeAndFlush(r *record) bool {
+func (o *fileGroup) writeFlushRotate(r *record) bool {
 	info, ok := o.fileMap[r.level]
 	if !ok {
 		slog.error("no file info for level: " + r.level.String())
 		return false
 	}
 
-	result := info.writeAndFlush(r.level, r.content)
+	result := info.writeFlushRotate(r.level, r.content)
 	return result
 }
 

@@ -127,7 +127,7 @@ func (o *fileInfo) write(level Level, content []byte) bool {
 	return true
 }
 
-func (o *fileInfo) writeAndFlush(level Level, content []byte) bool {
+func (o *fileInfo) writeFlushRotate(level Level, content []byte) bool {
 	if o.closed {
 		slog.error("file has been closed for level: " + level.String())
 		return false

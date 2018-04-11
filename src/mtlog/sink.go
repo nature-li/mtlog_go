@@ -45,7 +45,7 @@ func (o *Sink) pushBack(v interface{}) {
 	} else {
 		// write item to disk
 		r := v.(*record)
-		o.group.writeAndFlush(r)
+		o.group.writeFlushRotate(r)
 	}
 }
 
