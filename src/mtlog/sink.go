@@ -39,9 +39,9 @@ func (o *Sink) stop() {
 	if o.async {
 		o.flag <- true
 		<-o.done
-	} else {
-		o.group.stop()
 	}
+
+	o.group.stop()
 }
 
 func (o *Sink) pushBack(v interface{}) {
@@ -88,6 +88,5 @@ func (o *Sink) consume() {
 	}
 
 	o.handleQueue(nil)
-	o.group.stop()
 	o.done <- true
 }
