@@ -13,15 +13,19 @@ type Sink struct {
 	async bool
 }
 
-func newSink(async bool, fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
+func newSink(fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
 	return &Sink{
 		ch:    make(chan interface{}, queueSize),
 		flag:  make(chan bool, 1),
 		done:  make(chan bool, 0),
 		group: newFileGroup(fileDir, fileName, maxSize, fileCount),
 		timer: time.NewTimer(time.Second * 5),
-		async: async,
+		async: true,
 	}
+}
+
+func (o *Sink) setAsync(async bool) {
+	o.async = async
 }
 
 func (o *Sink) start() bool {
