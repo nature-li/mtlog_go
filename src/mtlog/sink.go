@@ -10,7 +10,7 @@ type Sink struct {
 	done  chan bool
 	group *fileGroup
 	timer *time.Timer
-	async  bool
+	async bool
 }
 
 func newSink(async bool, fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
@@ -20,7 +20,7 @@ func newSink(async bool, fileDir string, fileName string, maxSize int64, fileCou
 		done:  make(chan bool, 0),
 		group: newFileGroup(fileDir, fileName, maxSize, fileCount),
 		timer: time.NewTimer(time.Second * 5),
-		async:  async,
+		async: async,
 	}
 }
 
@@ -29,19 +29,13 @@ func (o *Sink) start() bool {
 		return false
 	}
 
-	// start consume thread
-	if o.async {
-		go o.consume()
-	}
+	go o.consume()
 	return true
 }
 
 func (o *Sink) stop() {
-	// stop consume thread
-	if o.async {
-		o.flag <- true
-		<-o.done
-	}
+	o.flag <- true
+	<-o.done
 }
 
 func (o *Sink) pushBack(v interface{}) {
