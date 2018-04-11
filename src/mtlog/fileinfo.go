@@ -89,6 +89,14 @@ func (o *fileInfo) close() {
 	o.reset()
 }
 
+func (o *fileInfo) delete() {
+	err := os.Remove(o.name)
+	if err != nil {
+		line := fmt.Sprintf("remove %v failed: %v", o.name, err.Error())
+		slog.error(line)
+	}
+}
+
 func (o *fileInfo) rename() {
 	newName := o.name + "." + string(getFileTime())
 	err := os.Rename(o.name, newName)
@@ -173,7 +181,11 @@ func (o *fileInfo) needRotate() bool {
 
 func (o *fileInfo) rotate() bool {
 	o.close()
-	o.rename()
+	if o.curLen > 0 {
+		o.rename()
+	} else {
+		o.delete()
+	}
 	o.reopen()
 	return true
 }
