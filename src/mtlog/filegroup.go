@@ -84,7 +84,9 @@ func (o *fileGroup) stop() {
 		info.close()
 	}
 
-	o.flag <- true
+	if o.fileCount >= 0 {
+		o.flag <- true
+	}
 }
 
 func (o *fileGroup) write(r *record) bool {

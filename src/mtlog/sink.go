@@ -29,13 +29,19 @@ func (o *Sink) start() bool {
 		return false
 	}
 
-	go o.consume()
+	if o.async {
+		go o.consume()
+	}
 	return true
 }
 
 func (o *Sink) stop() {
-	o.flag <- true
-	<-o.done
+	if o.async {
+		o.flag <- true
+		<-o.done
+	} else {
+		o.group.stop()
+	}
 }
 
 func (o *Sink) pushBack(v interface{}) {
@@ -79,12 +85,9 @@ func (o *Sink) consume() {
 		case <-o.flag:
 			quit = true
 		}
-
-		if quit {
-			o.handleQueue(nil)
-			o.group.stop()
-		}
 	}
 
+	o.handleQueue(nil)
+	o.group.stop()
 	o.done <- true
 }
