@@ -10,6 +10,7 @@ import (
 var (
 	queueSize = 100 * 1024
 	slog = newSysLog(10)
+	CodeRoot = ""
 )
 
 type Logger struct {
@@ -17,6 +18,7 @@ type Logger struct {
 	level Level
 	sink  *Sink
 	pid int
+	headerLen int
 }
 
 func NewLogger(async bool, env Env, level Level, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
@@ -25,6 +27,7 @@ func NewLogger(async bool, env Env, level Level, fileDir string, fileName string
 		level: level,
 		sink:  newSink(async, fileDir, fileName, maxSize, maxCount, queueSize),
 		pid: os.Getpid(),
+		headerLen: len(CodeRoot),
 	}
 }
 
@@ -381,8 +384,15 @@ func (o *Logger) getPosition(depth int) []byte {
 		fileLine = 0
 	}
 
+	var shortName string
+	if len(fileName) > o.headerLen {
+		shortName = fileName[o.headerLen:]
+	} else {
+		shortName = fileName
+	}
+
 	var buf []byte
-	buf = append(buf, fileName...)
+	buf = append(buf, shortName...)
 	buf = append(buf, ":"...)
 	buf = append(buf, strconv.Itoa(fileLine)...)
 	return buf
