@@ -19,17 +19,13 @@ type Logger struct {
 	pid int
 }
 
-func NewLogger(env Env, level Level, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
+func NewLogger(async bool, env Env, level Level, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
 	return &Logger{
 		env:   env,
 		level: level,
-		sink:  newSink(fileDir, fileName, maxSize, maxCount, queueSize),
+		sink:  newSink(async, fileDir, fileName, maxSize, maxCount, queueSize),
 		pid: os.Getpid(),
 	}
-}
-
-func (o *Logger) SetAsync(async bool) {
-	o.sink.setAsync(async)
 }
 
 func (o *Logger) Start() bool {

@@ -15,14 +15,14 @@ type Sink struct {
 	mutex *sync.Mutex
 }
 
-func newSink(fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
+func newSink(async bool, fileDir string, fileName string, maxSize int64, fileCount int, queueSize int) *Sink {
 	return &Sink{
+		async: async,
 		ch:    make(chan interface{}, queueSize),
 		flag:  make(chan bool, 1),
 		done:  make(chan bool, 0),
 		group: newFileGroup(fileDir, fileName, maxSize, fileCount),
 		timer: time.NewTimer(time.Second * 5),
-		async: true,
 		mutex: new(sync.Mutex),
 	}
 }
