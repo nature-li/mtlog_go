@@ -180,10 +180,11 @@ func (o *fileInfo) needRotate() bool {
 }
 
 func (o *fileInfo) rotate() bool {
-	o.close()
 	if o.curLen > 0 {
+		o.close()
 		o.rename()
 	} else {
+		o.close()
 		o.delete()
 	}
 	o.reopen()
