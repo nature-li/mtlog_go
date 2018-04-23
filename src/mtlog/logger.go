@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"strconv"
 	"os"
+	"strings"
 )
 
 var (
@@ -22,12 +23,20 @@ type Logger struct {
 }
 
 func NewLogger(async bool, env Env, level Level, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
+	headerLen := 0
+	_, fileName, _, ok := runtime.Caller(1)
+	if ok {
+		if strings.HasPrefix(fileName, CodeRoot) {
+			headerLen = len(CodeRoot)
+		}
+	}
+
 	return &Logger{
 		env:   env,
 		level: level,
 		sink:  newSink(async, fileDir, fileName, maxSize, maxCount, queueSize),
 		pid: os.Getpid(),
-		headerLen: len(CodeRoot),
+		headerLen: headerLen,
 	}
 }
 
