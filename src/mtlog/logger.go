@@ -24,9 +24,9 @@ type Logger struct {
 
 func NewLogger(async bool, env Env, level Level, fileDir string, fileName string, maxSize int64, maxCount int) *Logger {
 	headerLen := 0
-	_, fileName, _, ok := runtime.Caller(1)
+	_, name, _, ok := runtime.Caller(1)
 	if ok {
-		if strings.HasPrefix(fileName, CodeRoot) {
+		if strings.HasPrefix(name, CodeRoot) {
 			headerLen = len(CodeRoot)
 		}
 	}
